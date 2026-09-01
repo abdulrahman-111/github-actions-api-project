@@ -1,0 +1,39 @@
+##"When I push my code to GitHub, GitHub automatically runs my tests."
+name: ci workflow
+
+on:
+    push:
+        branches:
+        - main
+    pull_request:
+        branches:
+        - main
+
+
+jobs:
+    test:
+        name: Unit Testing using pytest 
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v7
+            
+            - name: Install uv 
+              uses:  astral-sh/setup-uv@v10.0.1
+              with: 
+                enable-cache: true
+            
+            - name: set up  python 
+              uses: actions/setup-python@v7
+              with: 
+                python-version-file: .python-version
+
+
+            - name: install dependencies
+              run: uv sync --locked -all-extras --dev
+
+            - name: run tests
+              run: uv run pytest 
+
+            - name: Minimize uv cache
+              run: uv cache prune --ci
