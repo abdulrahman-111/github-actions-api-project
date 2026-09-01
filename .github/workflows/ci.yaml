@@ -16,6 +16,27 @@ jobs:
     name: Linting check and fix with RUFF 
     runs-on: ubuntu-latest
     steps:
+
+    - name: " Trigger: push"
+      run: echo ${{ github.event_name }}
+      if: ${{ github.event_name == 'push' }}
+
+    - name: " Trigger: pull request"
+      run: echo ${{ github.event_name }}
+      if: ${{ github.event_name == 'pull_request' }}
+
+    - name: "Run on branch main "
+      run : echo  ${{ github.ref}}
+      if: ${{ github.ref == 'refs/heads/main' }}
+
+    - name: run on commit-message have BUG-FIX
+      run : echo BUG FIX 
+      if : ${{ contains(github.event.head_commit.message,'BUG') }}
+
+
+
+
+
     - name: Checkout repository
       uses: actions/checkout@v7
             
@@ -65,7 +86,6 @@ jobs:
             with: 
               python-version-file: .python-version
 
-
           - name: install dependencies
             run: uv sync --locked  --dev
 
@@ -74,3 +94,20 @@ jobs:
 
           - name: Minimize uv cache
             run: uv cache prune --ci
+  
+  report:
+    name: Generate Failure report 
+    runs-on: ubuntu-latest
+    needs: [lint , test ]
+    if: ${{ failure() }} # An ancestor job/step in the dependency chain failed. [lint, test]
+    steps:
+      - name: Generate failure report
+        run: |
+          echo "======================"
+          echo "CI FAILURE REPORT"
+          echo "lint result ${{ needs.lint.result }}"
+          echo "Test Result ${{ needs.test.result }}"
+          echo "workflow: ${{ github.workflow }}"
+          echo "COMMIT: ${{ github.sha }}"
+          echo "Branch: ${{github.ref }}"
+          echo "==============================="
