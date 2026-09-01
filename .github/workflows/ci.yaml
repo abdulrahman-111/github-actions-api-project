@@ -14,28 +14,17 @@ jobs:
 
   lint:
     name: Linting check and fix with RUFF 
-    runs-on: ubuntu-latest
+    
+    strategy: 
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        os: [ ubuntu-latest, windows-lates, macos-latest ]
+        python_version: [3.13 , 3.14 , 3.15]
+
+    runs-on: ${{ matrix.os }}
+    
     steps:
-
-    - name: " Trigger: push"
-      run: echo ${{ github.event_name }}
-      if: ${{ github.event_name == 'push' }}
-
-    - name: " Trigger: pull request"
-      run: echo ${{ github.event_name }}
-      if: ${{ github.event_name == 'pull_request' }}
-
-    - name: "Run on branch main "
-      run : echo  ${{ github.ref}}
-      if: ${{ github.ref == 'refs/heads/main' }}
-
-    - name: run on commit-message have BUG-FIX
-      run : echo BUG FIX 
-      if : ${{ contains(github.event.head_commit.message,'BUG') }}
-
-
-
-
 
     - name: Checkout repository
       uses: actions/checkout@v7
@@ -48,9 +37,12 @@ jobs:
     - name: set up  python 
       uses: actions/setup-python@v7
       with: 
-        python-version-file: .python-version
-
-
+        # python-version-file: .python-version
+        python-version: ${{ matrix.python_version }}
+    
+    - run:  python --version 
+   
+    
     - name: install dependencies
       run: uv sync --locked  --dev
 
@@ -111,3 +103,7 @@ jobs:
           echo "COMMIT: ${{ github.sha }}"
           echo "Branch: ${{github.ref }}"
           echo "==============================="
+
+
+
+    
