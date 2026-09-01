@@ -11,29 +11,61 @@ on:
 
 
 jobs:
-    test:
+
+  lint:
+    name: Linting check and fix with RUFF 
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v7
+            
+    - name: Install uv 
+      uses:  astral-sh/setup-uv@v10.0.1
+      with: 
+        enable-cache: true
+            
+    - name: set up  python 
+      uses: actions/setup-python@v7
+      with: 
+        python-version-file: .python-version
+
+
+    - name: install dependencies
+      run: uv sync --locked  --dev
+
+    - name: run Ruff
+      run: uv run ruff check . ##  --fix  -> without it , if there are any error it will fail 
+
+    - name: Minimize uv cache
+      run: uv cache prune --ci
+
+
+
+  test:
         name: Unit Testing using pytest 
+        # needs: 
+        #   - lint
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout repository
-              uses: actions/checkout@v7
+          - name: Checkout repository
+            uses: actions/checkout@v7
             
-            - name: Install uv 
-              uses:  astral-sh/setup-uv@v10.0.1
-              with: 
-                enable-cache: true
+          - name: Install uv 
+            uses:  astral-sh/setup-uv@v10.0.1
+            with: 
+              enable-cache: true
             
-            - name: set up  python 
-              uses: actions/setup-python@v7
-              with: 
-                python-version-file: .python-version
+          - name: set up  python 
+            uses: actions/setup-python@v7
+            with: 
+              python-version-file: .python-version
 
 
-            - name: install dependencies
-              run: uv sync --locked  --dev
+          - name: install dependencies
+            run: uv sync --locked  --dev
 
-            - name: run tests
-              run: uv run pytest 
+          - name: run tests
+            run: uv run pytest 
 
-            - name: Minimize uv cache
-              run: uv cache prune --ci
+          - name: Minimize uv cache
+            run: uv cache prune --ci
