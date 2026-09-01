@@ -1,0 +1,30 @@
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+src/github_actions_api_project/__pycache__/
+
+
+
+# Pytest
+.pytest_cache/
+
+# Ruff
+.ruff_cache/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Environment variables / secrets
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
