@@ -34,7 +34,12 @@ jobs:
       run: uv sync --locked  --dev
 
     - name: run Ruff
-      run: uv run ruff check . ##  --fix  -> without it , if there are any error it will fail 
+      run: uv run ruff check . 
+      ##  --fix  -> without it , if there are any error it will fail 
+      ## we will not use --fix in the ci -> as it will change the files only in the runner
+      ## we make developer run it locally 
+      ## ci -> is this code acceptable ?   
+
 
     - name: Minimize uv cache
       run: uv cache prune --ci
@@ -43,8 +48,8 @@ jobs:
 
   test:
         name: Unit Testing using pytest 
-        # needs: 
-        #   - lint
+        needs: 
+        - lint
         runs-on: ubuntu-latest
         steps:
           - name: Checkout repository
