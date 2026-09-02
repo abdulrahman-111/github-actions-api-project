@@ -128,4 +128,30 @@ jobs:
 
 
 
+  build_image:
+    name: Docker image Build 
+    runs-on: ubuntu-latest
+    needs: [ test]
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v7
     
+    - name: Build the image
+      run: docker build -t api:test .
+
+    - name: run container
+      run : |
+        docker run -d -name task-api -p 8000:8000 api:test
+
+    - name: test health of api 
+      run: |
+        sleep 3
+        curl --fail http://localhost:8000/health
+    
+    - name: Show logs of container if failure
+      run : docker logs task-api
+      if: ${{ failure()  }}
+
+    - name : delete container
+      run : docker rm -f task-api
+      if: ${{ always() }}

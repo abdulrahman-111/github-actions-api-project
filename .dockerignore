@@ -6,7 +6,15 @@ __pycache__/
 
 src/github_actions_api_project/__pycache__/
 
-
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+.env
+.git
+.github
 
 # Pytest
 .pytest_cache/
@@ -16,8 +24,8 @@ src/github_actions_api_project/__pycache__/
 
 # Coverage
 coverage*
-htmlcov/
 .coverage
+htmlcov/
 
 # Environment variables / secrets
 .env
