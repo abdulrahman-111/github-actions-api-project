@@ -22,14 +22,14 @@ def test_get_tasks_initially_empty():
 def test_create_task():
     response = client.post(
         "/tasks",
-        json={"title": "Learn GitHub Actions"},
+        json={"title": "Learn GiTHub Actions"},
     )
 
-    assert response.status_code == 201
+    assert response.status_code == 201S
 
     data = response.json()
 
-    assert data["title"] == "Learn GitHub Actions"
+    assert data["title"] == "Learn GiTHub Actions"
     assert data["completed"] is False
     assert "id" in data
 
