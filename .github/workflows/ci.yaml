@@ -141,7 +141,7 @@ jobs:
 
     - name: run container
       run : |
-        docker run -d -name task-api -p 8000:8000 api:test
+        docker run -d --name task-api -p 8000:8000 api:test
 
     - name: test health of api 
       run: |
