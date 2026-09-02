@@ -38,7 +38,7 @@ def test_get_task():
     response = client.get("/tasks/1")
 
     assert response.status_code == 200
-    assert response.json()["title"] == "Learn GitHub Actions"
+    assert response.json()["title"] == "Learn GiTHub Actions"
 
 
 def test_get_missing_task():
