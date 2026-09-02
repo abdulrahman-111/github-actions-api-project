@@ -80,18 +80,41 @@ jobs:
           - name: install dependencies
             run: uv sync --locked  --dev
 
-          - name: run tests
-            run: uv run  pytest 
+          # - name: run tests
+          #   run: uv run  pytest 
+          
+          - name: Generate coverage report & and run tests 
+            run: uv run pytest --cov=github_actions_api_project --cov-report=xml
+          
+          - name: Upload Artifacts
+            uses: actions/upload-artifact@v4
+            with:
+                name: coverage_report
+                path: coverage.xml
 
           #- name: Minimize uv cache
            # run: uv cache prune --ci
   
+
+  artifacts:
+    name: downlaod artifact
+    runs-on: ubuntu-latest
+    needs: [lint,test]
+    steps:
+      - name : download artifact
+        uses: actions/download-artifact@v5 
+        with:
+            name: coverage_report
+      - run: ls -la 
+
+
+
   report:
     name: Generate Failure report 
     runs-on: ubuntu-latest
     needs: [lint , test ]
     if: ${{ failure() }} # An ancestor job/step in the dependency chain failed. [lint, test]
-    steps:
+    steps: 
       - name: Generate failure report
         run: |
           echo "======================"
