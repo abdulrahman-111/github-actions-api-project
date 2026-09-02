@@ -25,7 +25,7 @@ def test_create_task():
         json={"title": "Learn GiTHub Actions"},
     )
 
-    assert response.status_code == 201S
+    assert response.status_code == 201
 
     data = response.json()
 

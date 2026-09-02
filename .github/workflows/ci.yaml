@@ -53,8 +53,8 @@ jobs:
       ## ci -> is this code acceptable ?   
 
 
-    - name: Minimize uv cache
-      run: uv cache prune --ci
+    # - name: Minimize uv cache
+    #   run: uv cache prune --ci
 
 # The uv cache prune --ci command is used to reduce the size of the cache and is optimized for CI. 
 
