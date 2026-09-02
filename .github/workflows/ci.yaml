@@ -40,7 +40,7 @@ jobs:
         # python-version-file: .python-version
         python-version: ${{ matrix.python_version }}
     
-    - run:  python --version 
+    - run:  python  --version 
    
     
     - name: install dependencies
