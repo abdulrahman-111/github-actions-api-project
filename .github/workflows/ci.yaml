@@ -81,7 +81,7 @@ jobs:
             run: uv sync --locked  --dev
 
           - name: run tests
-            run: uv run pytest 
+            run: uv run  pytest 
 
           - name: Minimize uv cache
             run: uv cache prune --ci
