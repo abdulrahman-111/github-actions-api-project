@@ -13,6 +13,7 @@ jobs:
         runs-on: ubuntu-latest
         environment:
             name: ${{ inputs.environment }}
+            deployment: ${{ inputs.environment == 'Production'  }}
 
         steps: 
             - name: Display environment configuration
