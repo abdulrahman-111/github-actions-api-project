@@ -18,6 +18,7 @@ jobs:
 
   build_image:
     name: Docker image Build 
+    needs: [ resuable_workflow_job ]
     runs-on: ubuntu-latest
     permissions:
       contents: read
