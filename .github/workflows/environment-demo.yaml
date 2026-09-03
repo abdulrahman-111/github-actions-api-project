@@ -1,0 +1,41 @@
+name: Environment Demo
+on: 
+    workflow_dispatch: 
+        inputs: 
+            environment: 
+                description: Choose deployment environment
+                required: true
+                type: choice
+                options: [ Stagging, Production ]
+jobs:
+    deploy:
+        name: Mock deploy to ${{ inputs.environment}}
+        runs-on: ubuntu-latest
+        environment:
+            name: ${{ inputs.environment }}
+
+        steps: 
+            - name: Display environment configuration
+              run: |
+                echo "Environment: ${{ inputs.environment }}"
+                echo "Application: ${{ vars.APP_NAME }}"
+                echo "URL: ${{ vars.APP_URL }}"
+
+            - name: Use deployment secret
+              env:
+                DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+              run: |
+                echo "Deployment token has been provided."
+
+                if [[ -z "$DEPLOY_TOKEN" ]]; then
+                    echo "::error::DEPLOY_TOKEN is missing"
+                    exit 1
+                fi
+
+                echo "Token exists."
+
+            - name: Mock deployment
+              run: |
+                echo "Deploying ${{ vars.APP_NAME }}"
+                echo "Target: ${{ vars.APP_URL }}"
+                echo "Deployment completed successfully."
