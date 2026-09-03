@@ -1,5 +1,5 @@
 ##"When I push my code to GitHub, GitHub automatically runs my tests."
-name: ci workflow
+name: Reusable CI 
 
 on:
   workflow_call:
