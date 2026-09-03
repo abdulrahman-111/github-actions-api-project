@@ -1,0 +1,69 @@
+name: Cont Deploy
+on: 
+    workflow_run:  ## Cont deliveriy to stagging, then cont deployment as this will run as the docker will flow run 
+        workflows:
+          - Docker
+        types:
+            - completed 
+jobs:
+    deploy-stagging:
+        name: Mock deploy to Stagging
+        runs-on: ubuntu-latest
+        environment:
+            name: Stagging
+           # url: ${{ vars.APP_URL }} ## attach a deployment URL to that environment/deployment in the GitHub UI
+            deployment: false
+        env: 
+            IMAGE_TAG: ${{ github.event.workflow_run.head_sha}}
+
+        if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main'       }}
+                  
+
+        steps: 
+           - name: Deployment information
+             run: |
+                echo "Deploying commit:"
+                echo "$IMAGE_TAG"
+
+                echo "Application:"
+                echo "${{ vars.APP_NAME }}"
+
+                echo "Target:"
+                echo "${{ vars.APP_URL }}"
+               
+                
+           - name: Validate deployment credentials
+             env:
+                DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+             
+             run: |
+                if [[ -z "$DEPLOY_TOKEN" ]]; then
+                    echo "::error::Deployment credential missing"
+                    exit 1
+                fi
+
+                echo "Deployment credentials available."
+
+
+           - name: Mock pull image
+             run: |
+                echo "Would pull:"
+                echo "ghcr.io/${{ github.repository }}:$IMAGE_TAG"
+
+
+           - name: Mock deployment
+             run: |
+                echo "Stopping old container..."
+                echo "Pulling new image..."
+                echo "Starting application..."
+                echo "Deployment successful."
+
+
+           - name: Deployment summary
+             run: |
+                echo "### Staging Deployment" >> "$GITHUB_STEP_SUMMARY"
+                echo "" >> "$GITHUB_STEP_SUMMARY"
+                echo "- Commit: \`$IMAGE_TAG\`" >> "$GITHUB_STEP_SUMMARY"
+                echo "- Environment: staging" >> "$GITHUB_STEP_SUMMARY"
+                echo "- Application: ${{ vars.APP_NAME }}" >> "$GITHUB_STEP_SUMMARY"
+                echo "- URL: ${{ vars.APP_URL }}" >> "$GITHUB_STEP_SUMMARY"
