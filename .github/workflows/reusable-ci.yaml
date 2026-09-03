@@ -1,0 +1,82 @@
+##"When I push my code to GitHub, GitHub automatically runs my tests."
+name: ci workflow
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        required: true
+        type: string
+
+jobs:
+
+  lint:
+    name: Linting check and fix with RUFF 
+
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v7
+            
+    - name: setup project
+      uses: ./.github/actions/setup-project
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: run Ruff
+      run: uv run ruff check . 
+
+  test:
+        name: Unit Testing using pytest 
+        needs: 
+        - lint
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v7 
+            
+          - name: setup project
+            uses: ./.github/actions/setup-project
+            with:
+              python-version: "3.13"
+          
+          - name: Generate coverage report & and run tests 
+            run: uv run pytest --cov=github_actions_api_project --cov-report=xml
+          
+          - name: Upload Artifacts
+            uses: actions/upload-artifact@v4
+            with:
+                name: coverage_report
+                path: coverage.xml
+  
+
+  artifacts:
+    name: downlaod artifact
+    runs-on: ubuntu-latest
+    needs: [lint,test]
+    steps:
+      - name : download artifact
+        uses: actions/download-artifact@v5 
+        with:
+            name: coverage_report
+      - run: ls -la 
+
+
+
+  report:
+    name: Generate Failure report 
+    runs-on: ubuntu-latest
+    needs: [lint , test ]
+    if: ${{ failure() }} # An ancestor job/step in the dependency chain failed. [lint, test]
+    steps: 
+      - name: Generate failure report
+        run: |
+          echo "======================"
+          echo "CI FAILURE REPORT"
+          echo "lint result ${{ needs.lint.result }}"
+          echo "Test Result ${{ needs.test.result }}"
+          echo "workflow: ${{ github.workflow }}"
+          echo "COMMIT: ${{ github.sha }}"
+          echo "Branch: ${{github.ref }}"
+          echo "==============================="

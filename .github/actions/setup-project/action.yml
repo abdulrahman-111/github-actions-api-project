@@ -1,7 +1,7 @@
 name: 'Setup Python Project'
 description: 'Setup uv, Python, and install project dependencies'
 inputs:
-  python_version:  # id of input
+  python-version:  # id of input
     description: 'Python Version to setup'
     required: true
     default: '3.13'
